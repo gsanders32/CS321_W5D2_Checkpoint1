@@ -74,9 +74,9 @@ namespace CS321_W5D2_BlogAPI.Controllers
             //  replace the code below with the correct implementation
 
             try
-            {               
-                _postService.Add(postModel.ToDomainModel());
-                return CreatedAtAction("Post", new { id = postModel.Id }, postModel);
+            {
+                var createPost = _postService.Add(postModel.ToDomainModel());
+                return Ok(createPost);
             }
             catch (Exception ex)
             {
@@ -115,7 +115,7 @@ namespace CS321_W5D2_BlogAPI.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("DeletePost", "Fix Me! Implement DELETE /api/blogs{blogId}/posts/{postId}");
+                ModelState.AddModelError("DeletePost", ex.Message);
                 return BadRequest(ModelState);
             }
             
