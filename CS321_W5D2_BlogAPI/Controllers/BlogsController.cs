@@ -18,9 +18,10 @@ namespace CS321_W5D2_BlogAPI.Controllers
     {
         private readonly IBlogService _blogService;
 
-        // TODO: inject BlogService
-        public BlogsController()
+        // inject BlogService
+        public BlogsController(IBlogService blogService)
         {
+            _blogService = blogService;
         }
 
         // GET: api/blogs
@@ -30,17 +31,10 @@ namespace CS321_W5D2_BlogAPI.Controllers
         {
             try
             {
-                // TODO: replace the code below with the correct implementation
+                //  replace the code below with the correct implementation
                 // to return all blogs
-                return Ok(new BlogModel[] {
-                    new BlogModel
-                    {
-                        Id = 1,
-                        Name = "Fix Me!",
-                        Description = "Implement GET /api/blogs",
-                        AuthorName = "unknown",
-                    }
-                });
+                var blogs = _blogService.GetAll().ToApiModels();
+                return Ok(blogs);
             }
             catch (Exception ex)
             {
@@ -56,15 +50,15 @@ namespace CS321_W5D2_BlogAPI.Controllers
         {
             try
             {
-                // TODO: replace the code below with the correct implementation
+                //  replace the code below with the correct implementation
                 // to return a blog by id
-                return Ok(new BlogModel
+                Blog blog = _blogService.Get(id);
+
+                if (blog != null)
                 {
-                    Id = id,
-                    Name = "Fix Me!",
-                    Description = "Implement GET /api/blogs/{id}",
-                    AuthorName = "unknown",
-                });
+                    return Ok(blog.ToApiModel());
+                }
+                return NotFound();
             }
             catch (Exception ex)
             {

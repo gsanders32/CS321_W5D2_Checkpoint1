@@ -19,10 +19,19 @@ namespace CS321_W5D2_BlogAPI.Core.Services
 
         public Post Add(Post newPost)
         {
-            // TODO: Prevent users from adding to a blog that isn't theirs
+            //  Prevent users from adding to a blog that isn't theirs
             //     Use the _userService to get the current users id.
             //     You may have to retrieve the blog in order to check user id
-            // TODO: assign the current date to DatePublished
+            //  assign the current date to DatePublished
+            var user = _userService.CurrentUserId;
+            Blog blog = _blogRepository.Get(newPost.BlogId);
+
+            if (user != blog.UserId)
+            {
+                throw new ApplicationException("You don't have permission to add a blog");
+            }
+            newPost.DatePublished = DateTime.Now;
+
             return _postRepository.Add(newPost);
         }
 
@@ -43,16 +52,26 @@ namespace CS321_W5D2_BlogAPI.Core.Services
 
         public void Remove(int id)
         {
-            var post = this.Get(id);
-            // TODO: prevent user from deleting from a blog that isn't theirs
+            Post post = this.Get(id);
+            // prevent user from deleting from a blog that isn't theirs
+            var user = _userService.CurrentUserId;
+
+            if (user != post.Blog.UserId)
+            {
+                throw new ApplicationException("You don't have permission to delete this blog");
+            }
             _postRepository.Remove(id);
         }
 
         public Post Update(Post updatedPost)
         {
-            // TODO: prevent user from updating a blog that isn't theirs
+            //  prevent user from updating a blog that isn't theirs
+            var user = _userService.CurrentUserId;
+            if (user != updatedPost.Blog.UserId)
+            {
+                throw new ApplicationException("You don't have permission to update this blog");
+            }
             return _postRepository.Update(updatedPost);
         }
-
     }
 }

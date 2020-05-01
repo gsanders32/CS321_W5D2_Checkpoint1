@@ -9,45 +9,72 @@ namespace CS321_W5D2_BlogAPI.Infrastructure.Data
 {
     public class PostRepository : IPostRepository
     {
+        private readonly AppDbContext _dbContext;
         public PostRepository(AppDbContext dbContext) 
-        {  
+        {
+            _dbContext = dbContext;
         }
 
         public Post Get(int id)
         {
-            // TODO: Implement Get(id). Include related Blog and Blog.User
-            throw new NotImplementedException();
+            //  Implement Get(id). Include related Blog and Blog.User
+            Post post = _dbContext.Posts.Include(x => x.Blog).Include(x => x.Blog.User).FirstOrDefault(x => x.Id == id);
+            if (post != null)
+            {
+                return post;
+            }
+            return null;
         }
 
         public IEnumerable<Post> GetBlogPosts(int blogId)
         {
-            // TODO: Implement GetBlogPosts, return all posts for given blog id
-            // TODO: Include related Blog and AppUser
-            throw new NotImplementedException();
+            //  Implement GetBlogPosts, return all posts for given blog id
+            //  Include related Blog and AppUser
+            var List = _dbContext.Posts.Include(x => x.Blog).Include(x => x.Blog.User).Where(x => x.BlogId == blogId).ToList();
+            if (List != null)
+            {
+                return List;
+            }
+            return null;
         }
 
         public Post Add(Post Post)
         {
-            // TODO: add Post
-            throw new NotImplementedException();
+            //  add Post
+            _dbContext.Add(Post);
+            _dbContext.SaveChanges();
+            return Post;
         }
 
-        public Post Update(Post Post)
+        public Post Update(Post updatedPost)
         {
-            // TODO: update Post
-            throw new NotImplementedException();
+            var post = _dbContext.Posts.Find(updatedPost.Id);
+            if (post == null) return null;
+            _dbContext.Entry(post)
+               .CurrentValues
+               .SetValues(updatedPost);
+            _dbContext.Posts.Update(post);
+            _dbContext.SaveChanges();
+            return post;
+
         }
 
         public IEnumerable<Post> GetAll()
         {
-            // TODO: get all posts
-            throw new NotImplementedException();
+            //  get all posts
+            return _dbContext.Posts.ToList();
         }
 
         public void Remove(int id)
         {
-            // TODO: remove Post
-            throw new NotImplementedException();
+            //  remove Post
+            Post findPost = _dbContext.Posts.Find(id);
+
+            if (findPost != null)
+            {
+                _dbContext.Posts.Remove(findPost);
+                _dbContext.SaveChanges();
+            }
         }
 
     }
